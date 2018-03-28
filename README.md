@@ -15,7 +15,7 @@ When encapsulated, you have some methods to make operations on your monad.
 
 ### ```bind(fn(x: any) => any): Monad<T>```
 
-this method takes a function as argument and returns a new Monad with your desired type.
+This method takes a function as argument and returns a new Monad with your desired type.
 
 ```typescript
 const myMonad: Monad<number[]> = Monad.of([1, 2, 3, 4, 5]);
@@ -53,7 +53,7 @@ const mappedMonad: Monad<number[]> = myMonad.flatMap(f);
 console.log(mappedMonad.value) //[2, 3, 4, 5, 6, 7]
 ```
 
-if your array has any empty array, it will be unnoticed
+If your array has any empty array, it will be unnoticed
 ```typescript
 const myMonad: Monad<number[][]> = Monad.of([[1], [], [4, 5, 6]]);
 const f = (x: number) => x + 1;
