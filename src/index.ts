@@ -1,5 +1,6 @@
 export default class Monad<T> {
-  _value: T
+  _value: T;
+
   get value(): T {
     return this._value;
   }

@@ -7,10 +7,17 @@ describe('Monad', () => {
     expect(myMonad.value).to.equal('Hello World');
   });
 
-  it('should return a empty monad if a mapped monad has null value', () => {
+  it('should return a empty monad if a mapped monad is null value', () => {
     const myMonad: Monad<null> = Monad.of(null);
     const f = (x: number) => x + 1;
     const mappedMonad: Monad<number[]> = myMonad.bind(f);
+    expect(mappedMonad.value).to.deep.equal(Monad.of([]).value);
+  });
+
+  it('should return a empty monad if a mapped monad is empty array', () => {
+    const myMonad: Monad<never[]> = Monad.of([]);
+    const f = (x: number) => x + 1;
+    const mappedMonad: Monad<number[]> = myMonad.bind(f).bind(f).bind(f);
     expect(mappedMonad.value).to.deep.equal(Monad.of([]).value);
   });
 
