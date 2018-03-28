@@ -1,8 +1,20 @@
 {
-  "name": "js_monad",
+  "name": "monad_ts",
   "version": "1.0.0",
   "main": "src/index.js",
   "license": "MIT",
+  "repository" : { 
+    "type" : "git",
+    "url" : "https://github.com/DavideCarvalho/monad.ts.git"
+  },
+  "bugs" : {
+    "url": "https://github.com/DavideCarvalho/monad.ts/issues"
+  },
+  "author": {
+    "name": "Davi de Carvalho",
+    "email": "davi_carvalho96@hotmail.com",
+    "url": "https://github.com/DavideCarvalho"
+  },
   "scripts": {
     "test": "node_modules/.bin/nyc node_modules/.bin/mocha",
     "test:coverage":
