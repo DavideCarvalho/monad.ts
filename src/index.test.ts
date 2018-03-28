@@ -30,8 +30,8 @@ describe('Monad', () => {
 
   it('should change monad type', () => {
     const myMonad: Monad<number> = Monad.of(1);
-    const f = (x: number) => x.toString();
-    const mappedMonad = myMonad.bind(f);
+    const f = (x: number): string => x.toString();
+    const mappedMonad: Monad<string> = myMonad.bind(f);
     expect(mappedMonad.value).to.equal('1');
   });
 
@@ -63,6 +63,14 @@ describe('Monad', () => {
     const f = (x: number) => x + 1;
     const mappedMonad: Monad<number[]> = myMonad.flatMap(f);
     expect(mappedMonad.value).to.deep.equal([2, 3, 4, 5, 6, 7]);
+  })
+
+  it('should chain flatMap with map', () => {
+    const myMonad: Monad<number[][]> = Monad.of([[1], [2, 3], [4, 5, 6]]);
+    const f = (x: number) => x + 1;
+    const g = (x: number) => x * 2;
+    const mappedMonad: Monad<number[]> = myMonad.flatMap(f).bind(g);
+    expect(mappedMonad.value).to.deep.equal([4, 6, 8, 10, 12, 14]);
   })
 
   it('should flatMap even with empty arrays', () => {

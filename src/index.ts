@@ -13,23 +13,23 @@ export default class Monad<T> {
     return new Monad<U>(object);
   }
 
-  public isNothing(): boolean {
+  private isNothing(): boolean {
     if (Array.isArray(this._value))
       return this._value.length === 0;
     return this.value === null;
   }
 
-  public flatMap<T>(fn: ((x:any) => any)): Monad<T[]> {
+  public flatMap<T>(fn: ((x:any) => any)): Monad<T> {
     this._value = [].concat.apply([], this._value)
     return this.bind(fn);
   }
 
-  public bind<T>(fn: ((x:any) => any)): Monad<T[]> {
+  public bind<T>(fn: ((x:any) => any)): Monad<T> {
     if (this.isNothing()) {
       return Monad.of([]);
     }
     if(Array.isArray(this._value))
-      return Monad.of(this._value.map(fn))  
+      return Monad.of(this._value.map(fn));
     return Monad.of(fn(this._value));
   } 
 }
