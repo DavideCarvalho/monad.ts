@@ -120,7 +120,8 @@ const f = (x: SonJson):ParentsJson => x.parents;
 const g = (x: any):string => x.teste;
 const h = (x: string):number => x.length;
 const j = (x: number):number => x*x
-expect(myMonad.bind(f).bind(g).bind(h).bind(j).value).to.deep.equal(Monad.of([]).value)
+const mappedMonad = myMonad.bind(f).bind(g).bind(h).bind(j);
+console.log(mappedMonad.value) //[]
 ```
 
 Either is in experimental stage, implementation may change based on feedbacks, so please, give your opinion about it on issues.
