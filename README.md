@@ -70,11 +70,12 @@ const mappedMonad: Monad<number[]> = myMonad.flatMap(f).bind(g);
 console.log(mappedMonad.value); // [4, 6, 8, 10, 12, 14]
 ```
 
-### ```either(e: any):any``` _experimental_
+### ```either(e: Error, monadValue: any):any``` _experimental_
 This either function is like a catch. You can define what the monad will do in case your operation throws something. This either function has to return something, otherwhise it will stop your chain.
+Either function receives the error and the Monad value of the bind that just throwed an error, so you can try to do something in case of error
 
 ```typescript
-(e):never[] => {console.log(e); return []}
+(error: Erorr, monadValue):any => {console.log(e); return []}
 ```
 This is the default either. It will log your error and return an empty array, e.g:
 
@@ -104,7 +105,7 @@ In the example above, g function will look for an attribute called test. Since t
 To define a custom either function, you only need to do this:
 ```typescript
 const myMonad: Monad<SonJson> = Monad.of({name: 'Son', parents: {dad: 'Dad', mother:'Mother'}});
-const customEither = (e) => {console.log('customEither'); return ''};
+const customEither = (error, monadValue) => {console.log('customEither'); return ''};
 myMonad.either = customEither;
 const f = (x: SonJson):ParentsJson => x.parents;
 const g = (x: any):string => x.teste;
@@ -121,7 +122,7 @@ const g = (x: any):string => x.teste;
 const h = (x: string):number => x.length;
 const j = (x: number):number => x*x
 const mappedMonad = myMonad.bind(f).bind(g).bind(h).bind(j);
-console.log(mappedMonad.value) //[]
+console.log(mappedMonad.value) // []
 ```
 
 Either is in experimental stage, implementation may change based on feedbacks, so please, give your opinion about it on issues.

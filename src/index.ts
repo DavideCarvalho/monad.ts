@@ -5,7 +5,7 @@ export default class Monad<T> {
   }
 
   private monadValue: T;
-  private eitherFunction = (e):never[] => {console.error(e); return []};
+  private eitherFunction = (error: Error, monadValue: any) => {console.error(e); return []};
 
   get value(): T {
     return this.monadValue;
@@ -13,7 +13,7 @@ export default class Monad<T> {
   get either() {
     return this.eitherFunction;
   }
-  set either(fn: ((x:any) => any)) {
+  set either(fn: ((error:any, monadValue: any) => any)) {
     this.eitherFunction = fn;
   }
 
@@ -46,7 +46,7 @@ export default class Monad<T> {
     try {
       return this.monadValue.map(fn)
     } catch (e) {
-      return this.eitherFunction(e);
+      return this.eitherFunction(e, this.monadValue);
     }
   }
 
@@ -54,7 +54,7 @@ export default class Monad<T> {
     try {
       return fn(this.monadValue)
     } catch (e) {
-      return this.eitherFunction(e);
+      return this.eitherFunction(e, this.monadValue);
     }
   }
 

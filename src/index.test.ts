@@ -48,7 +48,7 @@ describe('Monad', () => {
 
   it('should return either custom return if some of the bind gets an error', () => {
     const myMonad: Monad<SonJson> = Monad.of({name: 'Son', parents: {dad: 'Dad', mother:'Mother'}});
-    const customEither = (e) => {console.log('customEither'); return ''};
+    const customEither = (e: any, monadValue: any) => {console.log('customEither'); return ''};
     myMonad.either = customEither;
     const f = (x: SonJson):ParentsJson => x.parents;
     const g = (x: any):string => x.test;
