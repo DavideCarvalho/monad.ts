@@ -30,9 +30,6 @@ export default class Monad<T> {
     if (this.isNothing()) {
       return Monad.of([]);
     }
-    // if (Array.isArray(this.monadValue)) {
-    //   return Monad.of(this.mapMonadIfIsArray(fn));
-    // }
     const newMonad = Monad.of(this.mapMonad(fn));
     newMonad.either = this.eitherFunction;
     return newMonad;

@@ -141,34 +141,3 @@ interface ParentsJson {
   dad: string;
   mother: string
 }
-
-class Son {
-  private _name:string;
-  get name():string {
-    return this._name
-  }
-  private _parents: parents;
-  get parents():parents {
-    return this._parents;
-  }
-
-  constructor(name: string, parents: parents) {
-    this._name = name;
-    this._parents = parents;
-  }
-}
-
-class parents {
-  private _dad: string;
-  get dad():string {
-    return this._dad;
-  }
-  private _mother: string;
-  get mother():string {
-    return this._mother;
-  }
-  constructor(dad: string, mother: string) {
-    this._dad = dad;
-    this._mother = mother;
-  }
-}

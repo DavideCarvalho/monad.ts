@@ -70,7 +70,7 @@ const mappedMonad: Monad<number[]> = myMonad.flatMap(f).bind(g);
 console.log(mappedMonad.value); // [4, 6, 8, 10, 12, 14]
 ```
 
-### ```either(e: any):any```
+### ```either(e: any):any``` _experimental_
 This either function is like a catch. You can define what the monad will do in case your operation throws something. This either function has to return something, otherwhise it will stop your chain.
 
 ```typescript
@@ -78,11 +78,24 @@ This either function is like a catch. You can define what the monad will do in c
 ```
 This is the default either. It will log your error and return an empty array, e.g:
 
+for this example, we'll create two interfaces:
+```typescript
+interface SonJson{ 
+  name: string;
+  parents: ParentsJson;
+}
+
+interface ParentsJson {
+  dad: string;
+  mother: string
+}
+```
+
 ```typescript
 const myMonad: Monad<SonJson> = Monad.of({name: 'Son', parents: {dad: 'Dad', mother:'Mother'}});
 const f = (x: SonJson):ParentsJson => x.parents;
 const g = (x: any):string => x.test;
-const h = (x: any):number => x.length;
+const h = (x: string):number => x.length;
 const mappedMonad = myMonad.bind(f).bind(g).bind(h);
 console.log(mappedMonad.value); // []
 ```
@@ -99,3 +112,15 @@ const h = (x: any):number => x.length;
 const mappedMonad = myMonad.bind(f).bind(g).bind(h);
 console.log(mappedMonad.value); // ''
 ```
+
+Either will work even if your an error happened on your third bind and you have 4 binds, like this:
+```typescript
+const myMonad: Monad<SonJson> = Monad.of({name: 'Son', parents: {dad: 'Dad', mother:'Mother'}});
+const f = (x: SonJson):ParentsJson => x.parents;
+const g = (x: any):string => x.teste;
+const h = (x: string):number => x.length;
+const j = (x: number):number => x*x
+expect(myMonad.bind(f).bind(g).bind(h).bind(j).value).to.deep.equal(Monad.of([]).value)
+```
+
+Either is in experimental stage, implementation may change based on feedbacks, so please, give your opinion about it on issues.
