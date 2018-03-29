@@ -32,12 +32,21 @@ describe('Monad', () => {
   it('should return either default return if some of the bind gets an error', () => {
     const myMonad: Monad<SonJson> = Monad.of({name: 'Son', parents: {dad: 'Dad', mother:'Mother'}});
     const f = (x: SonJson):ParentsJson => x.parents;
-    const g = (x: any):string => x.test;
-    const h = (x: any):number => x.length;
+    const g = (x: any):string => x.teste;
+    const h = (x: string):number => x.length;
     expect(myMonad.bind(f).bind(g).bind(h).value).to.deep.equal(Monad.of([]).value)
   });
 
-  it.only('should return either custom return if some of the bind gets an error', () => {
+  it('should return either default return if some of the bind gets an error even if has more binds to chain', () => {
+    const myMonad: Monad<SonJson> = Monad.of({name: 'Son', parents: {dad: 'Dad', mother:'Mother'}});
+    const f = (x: SonJson):ParentsJson => x.parents;
+    const g = (x: any):string => x.teste;
+    const h = (x: string):number => x.length;
+    const j = (x: number):number => x*x
+    expect(myMonad.bind(f).bind(g).bind(h).bind(j).value).to.deep.equal(Monad.of([]).value)
+  });
+
+  it('should return either custom return if some of the bind gets an error', () => {
     const myMonad: Monad<SonJson> = Monad.of({name: 'Son', parents: {dad: 'Dad', mother:'Mother'}});
     const customEither = (e) => {console.log('customEither'); return ''};
     myMonad.either = customEither;
@@ -45,7 +54,6 @@ describe('Monad', () => {
     const g = (x: any):string => x.test;
     const h = (x: any):number => x.length;
     expect(myMonad.bind(f).bind(g).bind(h).value).to.deep.equal(Monad.of('').value)
-    //expect(myMonad.bind(f).bind(g).bind(h).value).to.deep.equal(Monad.of('').value)
   });
 
   it('should throw error', () => {
