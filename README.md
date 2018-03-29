@@ -61,7 +61,7 @@ const mappedMonad: Monad<number[]> = myMonad.flatMap(f);
 console.log(mappedMonad.value); // [2, 5, 6, 7]
 ```
 
-Aaand we can't forget, you can chain flatMap with map
+Aaand we can't forget, you can chain flatMap with bind
 ```typescript
 const myMonad: Monad<number[][]> = Monad.of([[1], [], [4, 5, 6]]);
 const f = (x: number) => x + 1;
