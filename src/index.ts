@@ -5,9 +5,16 @@ export default class Monad<T> {
   }
 
   private monadValue: T;
+  private eitherFunction = (e):never[] => {console.error(e); return []};
 
   get value(): T {
     return this.monadValue;
+  }
+  get either() {
+    return this.eitherFunction;
+  }
+  set either(fn: ((x:any) => any)) {
+    this.eitherFunction = fn;
   }
 
   private constructor(object: T) {
@@ -23,10 +30,35 @@ export default class Monad<T> {
     if (this.isNothing()) {
       return Monad.of([]);
     }
+    // if (Array.isArray(this.monadValue)) {
+    //   return Monad.of(this.mapMonadIfIsArray(fn));
+    // }
+    const newMonad = Monad.of(this.mapMonad(fn));
+    newMonad.either = this.eitherFunction;
+    return newMonad;
+  }
+
+  private mapMonad(fn: ((x: any) => any)) {
     if (Array.isArray(this.monadValue)) {
-      return Monad.of(this.monadValue.map(fn));
+      return this.mapMonadIfIsArray(fn);
     }
-    return Monad.of(fn(this.monadValue));
+    return this.mapMonadIfIsSingleValue(fn);
+  }
+
+  private mapMonadIfIsArray(fn: ((x: any) => any)) {
+    try {
+      return this.monadValue.map(fn)
+    } catch (e) {
+      return this.eitherFunction(e);
+    }
+  }
+
+  private mapMonadIfIsSingleValue(fn: ((x: any) => any)) {
+    try {
+      return fn(this.monadValue)
+    } catch (e) {
+      return this.eitherFunction(e);
+    }
   }
 
   private isNothing(): boolean {

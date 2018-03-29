@@ -21,6 +21,41 @@ describe('Monad', () => {
     expect(mappedMonad.value).to.deep.equal(Monad.of([]).value);
   });
 
+  it('should get dad name', () => {
+    const myMonad: Monad<SonJson> = Monad.of({name: 'Son', parents: {dad: 'Dad', mother:'Mother'}});
+    const f = (x: SonJson):ParentsJson => x.parents;
+    const g = (x: ParentsJson):string => x.dad;
+    const mappedMonad: Monad<string> = myMonad.bind(f).bind(g);
+    expect(mappedMonad.value).to.deep.equal('Dad');
+  });
+
+  it('should return either default return if some of the bind gets an error', () => {
+    const myMonad: Monad<SonJson> = Monad.of({name: 'Son', parents: {dad: 'Dad', mother:'Mother'}});
+    const f = (x: SonJson):ParentsJson => x.parents;
+    const g = (x: any):string => x.test;
+    const h = (x: any):number => x.length;
+    expect(myMonad.bind(f).bind(g).bind(h).value).to.deep.equal(Monad.of([]).value)
+  });
+
+  it.only('should return either custom return if some of the bind gets an error', () => {
+    const myMonad: Monad<SonJson> = Monad.of({name: 'Son', parents: {dad: 'Dad', mother:'Mother'}});
+    const customEither = (e) => {console.log('customEither'); return ''};
+    myMonad.either = customEither;
+    const f = (x: SonJson):ParentsJson => x.parents;
+    const g = (x: any):string => x.test;
+    const h = (x: any):number => x.length;
+    expect(myMonad.bind(f).bind(g).bind(h).value).to.deep.equal(Monad.of('').value)
+    //expect(myMonad.bind(f).bind(g).bind(h).value).to.deep.equal(Monad.of('').value)
+  });
+
+  it('should throw error', () => {
+    const myMonad: Monad<SonJson> = Monad.of({name: 'Son', parents: {dad: 'Dad', mother:'Mother'}});
+    const f = (x: SonJson):ParentsJson => x.parents;
+    const g = (x: ParentsJson):string => x.mother;
+    const mappedMonad: Monad<string> = myMonad.bind(f).bind(g);
+    expect(mappedMonad.value).to.deep.equal('Mother');
+  });
+
   it('should iterate over an object', () => {
     const myMonad: Monad<number[]> = Monad.of([1, 2, 3, 4, 5]);
     const f = (x: number) => x + 1;
@@ -38,7 +73,7 @@ describe('Monad', () => {
   it('should validate monad right identity', () => {
     const firstMonad: Monad<string> = Monad.of('Hello World');
     const secondsMonad: Monad<Monad<string>> = Monad.of(firstMonad);
-    expect(secondsMonad.value).to.deep.equal(Monad.of('Hello World'));
+    expect(secondsMonad.value.value).to.eql(Monad.of('Hello World').value);
   });
 
   it('should validate monad left identity', () => {
@@ -88,3 +123,44 @@ const somaMaisUmAosNumeros = (object: any) => {
 const multiplicaOsNumerosPorDois = (object: any) => {
   return object.map((i: number) => i * 2);
 };
+
+interface SonJson{ 
+  name: string;
+  parents: ParentsJson;
+}
+
+interface ParentsJson {
+  dad: string;
+  mother: string
+}
+
+class Son {
+  private _name:string;
+  get name():string {
+    return this._name
+  }
+  private _parents: parents;
+  get parents():parents {
+    return this._parents;
+  }
+
+  constructor(name: string, parents: parents) {
+    this._name = name;
+    this._parents = parents;
+  }
+}
+
+class parents {
+  private _dad: string;
+  get dad():string {
+    return this._dad;
+  }
+  private _mother: string;
+  get mother():string {
+    return this._mother;
+  }
+  constructor(dad: string, mother: string) {
+    this._dad = dad;
+    this._mother = mother;
+  }
+}
