@@ -21,15 +21,27 @@ export default class Monad<T> {
   // tslint:disable-next-line:no-shadowed-variable
   public bind<T>(fn: ((x: any) => any)): Monad<T> {
     if (this.isNothing()) {
-      return Monad.of([]);
+      return Monad.of([]).setEither(this.eitherFunction);
     }
-    const newMonad = this.mapMonad(fn);
-    newMonad.either = this.eitherFunction;
-    return newMonad;
+    try {
+      if (Array.isArray(this.monadValue)) {
+        return Monad.of(this.monadValue.map(fn)).setEither(this.eitherFunction);
+      }
+      return Monad.of(fn(this.monadValue)).setEither(this.eitherFunction);
+    } catch (e) {
+      // const monadNothing = Monad.of(this.eitherFunction(e, this.monadValue));
+      // monadNothing.type = 'Nothing';
+      return Monad.of(this.eitherFunction(e, this.monadValue)).setType('Nothing').setEither(this.eitherFunction);
+    }
   }
 
   public getMonadType(): string  {
     return this.monadType;
+  }
+
+  public setEither(fn: ((error: any, monadValue: any) => any)) {
+    this.eitherFunction = fn;
+    return this;
   }
 
   private eitherFunction = (error: Error, monadValue: any) => {
@@ -38,47 +50,22 @@ export default class Monad<T> {
     return [];
   }
 
+  private setType(monadType: string) {
+    this.monadType = monadType;
+    return this;
+  }
+
   get value(): T {
     return this.monadValue;
   }
   get either() {
     return this.eitherFunction;
   }
-  set either(fn: ((error: any, monadValue: any) => any)) {
-    this.eitherFunction = fn;
-  }
   private get type() {
     return this.monadType;
   }
   private set type(monadType: string) {
     this.monadType = monadType;
-  }
-
-  private mapMonad(fn: ((x: any) => any)) {
-    if (Array.isArray(this.monadValue)) {
-      return this.mapMonadIfIsArray(fn);
-    }
-    return this.mapMonadIfIsSingleValue(fn);
-  }
-
-  private mapMonadIfIsArray(fn: ((x: any) => any)) {
-    try {
-      return Monad.of(this.monadValue.map(fn));
-    } catch (e) {
-      const monadNothing = Monad.of(this.eitherFunction(e, this.monadValue));
-      monadNothing.type = 'Nothing';
-      return monadNothing;
-    }
-  }
-
-  private mapMonadIfIsSingleValue(fn: ((x: any) => any)) {
-    try {
-      return Monad.of(fn(this.monadValue));
-    } catch (e) {
-      const monadNothing = Monad.of(this.eitherFunction(e, this.monadValue));
-      monadNothing.type = 'Nothing';
-      return monadNothing;
-    }
   }
 
   private isNothing(): boolean {

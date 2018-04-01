@@ -100,18 +100,36 @@ const h = (x: string):number => x.length;
 const mappedMonad = myMonad.bind(f).bind(g).bind(h);
 console.log(mappedMonad.value); // []
 ```
-In the example above, g function will look for an attribute called test. Since this attribute doesn't exist, it will return undefined. After that, h function will try to get the length of undefined, so it will give you an error. To stop the error from spreading and stoping our application, either will return an empty array .
+In the example above, g function will look for an attribute called test. Since this attribute doesn't exist, it will return undefined. After that, h function will try to get the length of undefined, so it will give you an error. To stop the error from spreading and stoping our application, either will return an empty array.
 
 To define a custom either function, you only need to do this:
 ```typescript
-const myMonad: Monad<SonJson> = Monad.of({name: 'Son', parents: {dad: 'Dad', mother:'Mother'}});
 const customEither = (error, monadValue) => {console.log('customEither'); return ''};
-myMonad.either = customEither;
+const myMonad: Monad<SonJson> = Monad.of({name: 'Son', parents: {dad: 'Dad', mother:'Mother'}}).setEither(customEither);
 const f = (x: SonJson):ParentsJson => x.parents;
 const g = (x: any):string => x.teste;
 const h = (x: any):number => x.length;
 const mappedMonad = myMonad.bind(f).bind(g).bind(h);
 console.log(mappedMonad.value); // ''
+```
+
+You can also call setEither in the middle of a chain of bindings, this is really helpful if you want diferent either functions for different bindings
+```typescript
+const customEitherOne = (error, monadValue) => {console.log('customEitherOne'); return ''};
+const customEitherTwo = (error, monadValue) => {console.log('customEitherTwo'); return ''};
+const customEitherThree = (error, monadValue) => {console.log('customEitherThree'); return []};
+const myMonad: Monad<SonJson> = Monad.of({name: 'Son', parents: {dad: 'Dad', mother:'Mother'}}).setEither(customEither);
+const f = (x: SonJson):ParentsJson => x.parents;
+const g = (x: any):string => x.teste;
+const h = (x: any):number => x.length;
+const mappedMonad = myMonad
+                    .setEither(customEitherOne)
+                    .bind(f)
+                    .setEither(customEitherTwo)
+                    .bind(g)
+                    .setEither(customEitherThree)
+                    .bind(h);
+console.log(mappedMonad.value); // []
 ```
 
 Either will work even if your an error happened on your third bind and you have 4 binds, like this:
@@ -126,3 +144,11 @@ console.log(mappedMonad.value) // []
 ```
 
 Either is in experimental stage, implementation may change based on feedbacks, so please, give your opinion about it on issues.
+
+## Monad Types
+Since Monads can throw error and stop your bind chain (like the cases we saw on either), they have two types to tell if everything ocurred alright or not:
+- Maybe: Monad is a Maybe type if your operations ocurred until the end
+- Nothing: If an error occured during any of your bindings, the result of your Monad will be a Nothing Monad
+If you use `Monad.of()` passing a falsey Monad value, it will be registered as an Nothing Monad.
+
+To get the type of your Monad, you can use the method `getMonadType(): string`, and it will return the Monad type as a String.

@@ -61,21 +61,41 @@ describe('Monad', () => {
   });
 
   it('should return either custom return if some of the bind gets an error', () => {
-    const myMonad: Monad<SonJson> = Monad.of({name: 'Son', parents: {dad: 'Dad', mother:'Mother'}});
     const customEither = (e: any, monadValue: any) => {
       // tslint:disable-next-line:no-console
       console.error('customEither');
       return '';
     };
-    myMonad.either = customEither;
+    const myMonad: Monad<SonJson> = Monad
+                                    .of({name: 'Son', parents: {dad: 'Dad', mother: 'Mother'}})
+                                    .setEither(customEither);
     const f = (x: SonJson): ParentsJson => x.parents;
     const g = (x: any): string => x.test;
     const h = (x: any): number => x.length;
-    expect(myMonad.bind(f).bind(g).bind(h).value).to.deep.equal(Monad.of('').value)
+    expect(myMonad.bind(f).bind(g).bind(h).value).to.deep.equal(Monad.of('').value);
+  });
+
+  it('should return either custom return if either is set in the middle of a bind chain', () => {
+    const customEitherOne = (error: any, monadValue: any) => {console.error('customEitherOne'); return ''; };
+    const customEitherTwo = (error: any, monadValue: any) => {console.error('customEitherTwo'); return ''; };
+    const customEitherThree = (error: any, monadValue: any) => {console.error('customEitherThree'); return []; };
+    const myMonad: Monad<SonJson> = Monad
+                                    .of({name: 'Son', parents: {dad: 'Dad', mother: 'Mother'}});
+    const f = (x: SonJson): ParentsJson => x.parents;
+    const g = (x: any): string => x.test;
+    const h = (x: any): number => x.length;
+    const mappedMonad = myMonad
+                    .setEither(customEitherOne)
+                    .bind(f)
+                    .setEither(customEitherTwo)
+                    .bind(g)
+                    .setEither(customEitherThree)
+                    .bind(h);
+    expect(mappedMonad.value).to.deep.equal(Monad.of([]).value);
   });
 
   it('should throw error', () => {
-    const myMonad: Monad<SonJson> = Monad.of({name: 'Son', parents: {dad: 'Dad', mother:'Mother'}});
+    const myMonad: Monad<SonJson> = Monad.of({name: 'Son', parents: {dad: 'Dad', mother: 'Mother'}});
     const f = (x: SonJson): ParentsJson => x.parents;
     const g = (x: ParentsJson): string => x.mother;
     const mappedMonad: Monad<string> = myMonad.bind(f).bind(g);
@@ -124,7 +144,7 @@ describe('Monad', () => {
     const f = (x: number) => x + 1;
     const mappedMonad: Monad<number[]> = myMonad.flatMap(f);
     expect(mappedMonad.value).to.deep.equal([2, 3, 4, 5, 6, 7]);
-  })
+  });
 
   it('should chain flatMap with map', () => {
     const myMonad: Monad<number[][]> = Monad.of([[1], [2, 3], [4, 5, 6]]);
@@ -132,14 +152,14 @@ describe('Monad', () => {
     const g = (x: number) => x * 2;
     const mappedMonad: Monad<number[]> = myMonad.flatMap(f).bind(g);
     expect(mappedMonad.value).to.deep.equal([4, 6, 8, 10, 12, 14]);
-  })
+  });
 
   it('should flatMap even with empty arrays', () => {
     const myMonad: Monad<number[][]> = Monad.of([[1], [], [4, 5, 6]]);
     const f = (x: number) => x + 1;
     const mappedMonad: Monad<number[]> = myMonad.flatMap(f);
     expect(mappedMonad.value).to.deep.equal([2, 5, 6, 7]);
-  })
+  });
 });
 
 const somaMaisUmAosNumeros = (object: any) => {
@@ -150,7 +170,7 @@ const multiplicaOsNumerosPorDois = (object: any) => {
   return object.map((i: number) => i * 2);
 };
 
-interface SonJson{
+interface SonJson {
   name: string;
   parents: ParentsJson;
 }
