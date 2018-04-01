@@ -146,8 +146,7 @@ console.log(mappedMonad.value); // []
 
 ## Monad Types
 Since Monads can throw error and stop your bind chain (like the cases we saw on either), they have two types to tell if everything ocurred alright or not:
-- Maybe: Monad is a Maybe type if your operations ocurred until the end
-- Nothing: If an error occured during any of your bindings, the result of your Monad will be a Nothing Monad
-If you use `Monad.of()` passing a falsey Monad value, it will be registered as an Nothing Monad.
+- Maybe: Monad is a Maybe if your value on `Monad.of(value)` is a valid value or your operations ocurred until the end
+- Nothing: If you pass a falsey value for Monad.of, like null, our an empty array, your Monad will be Nothing. If an error occured during any of your bindings, the result of your Monad will be a Nothing Monad.
 
 To get the type of your Monad, you can use the method `getMonadType(): string`, and it will return the Monad type as a String.
