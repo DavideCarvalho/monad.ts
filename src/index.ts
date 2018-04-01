@@ -1,38 +1,77 @@
 export default class Monad<T> {
 
-  public static of<U>(object: U):Monad<U> {
+  public static of<U>(object: U): Monad<U> {
     return new Monad<U>(object);
   }
 
   private monadValue: T;
-
-  get value(): T {
-    return this.monadValue;
-  }
+  private monadType: string = 'Maybe';
 
   private constructor(object: T) {
     this.monadValue = object;
+    this.isNothing() ? this.monadType = 'Nothing' : this.monadType = 'Maybe';
   }
 
+  // tslint:disable-next-line:no-shadowed-variable
   public flatMap<T>(fn: ((x: any) => any)): Monad<T> {
     this.monadValue = [].concat.apply([], this.monadValue);
     return this.bind(fn);
   }
 
+  // tslint:disable-next-line:no-shadowed-variable
   public bind<T>(fn: ((x: any) => any)): Monad<T> {
     if (this.isNothing()) {
-      return Monad.of([]);
+      return Monad.of([]).setEither(this.eitherFunction);
     }
-    if (Array.isArray(this.monadValue)) {
-      return Monad.of(this.monadValue.map(fn));
+    try {
+      if (Array.isArray(this.monadValue)) {
+        return Monad.of(this.monadValue.map(fn)).setEither(this.eitherFunction);
+      }
+      return Monad.of(fn(this.monadValue)).setEither(this.eitherFunction);
+    } catch (e) {
+      // const monadNothing = Monad.of(this.eitherFunction(e, this.monadValue));
+      // monadNothing.type = 'Nothing';
+      return Monad.of(this.eitherFunction(e, this.monadValue)).setType('Nothing').setEither(this.eitherFunction);
     }
-    return Monad.of(fn(this.monadValue));
+  }
+
+  public getMonadType(): string  {
+    return this.monadType;
+  }
+
+  public setEither(fn: ((error: any, monadValue: any) => any)) {
+    this.eitherFunction = fn;
+    return this;
+  }
+
+  private eitherFunction = (error: Error, monadValue: any) => {
+    // tslint:disable-next-line:no-console
+    console.error(error);
+    return [];
+  }
+
+  private setType(monadType: string) {
+    this.monadType = monadType;
+    return this;
+  }
+
+  get value(): T {
+    return this.monadValue;
+  }
+  get either() {
+    return this.eitherFunction;
+  }
+  private get type() {
+    return this.monadType;
+  }
+  private set type(monadType: string) {
+    this.monadType = monadType;
   }
 
   private isNothing(): boolean {
     if (Array.isArray(this.monadValue)) {
       return this.monadValue.length === 0;
     }
-    return this.value === null;
+    return this.value === null || this.type === 'Nothing';
   }
 }
