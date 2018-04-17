@@ -11,7 +11,7 @@ install it with npm or yarn
 Use this lib is quite simple! You only need to import Monad and encapsulate your object inside it.
 
 ```typescript
-import Monad from 'MonadTs';
+import Monad from '@dudousxd/monad.ts';
 const myMonad: Monad<string> = Monad.of('Hello World');
 ```
 
