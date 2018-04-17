@@ -34,7 +34,7 @@
   },
   "nyc": {
     "extension": [".ts", ".tsx"],
-    "exclude": ["**/*.d.ts", "coverage/**", "**/*.test.ts"],
+    "exclude": ["**/*.d.ts", "coverage/**", "**/*.test.ts", "**/dist/*.js"],
     "reporter": ["html"],
     "all": true
   }

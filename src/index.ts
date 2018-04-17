@@ -9,7 +9,7 @@ export default class Monad<T> {
 
   private constructor(object: T) {
     this.monadValue = object;
-    this.isNothing() ? this.monadType = 'Nothing' : this.monadType = 'Maybe';
+    this.isNothing() ? this.monadType = 'Nothing' : this.monadType = 'Just';
   }
 
   // tslint:disable-next-line:no-shadowed-variable
@@ -29,8 +29,6 @@ export default class Monad<T> {
       }
       return Monad.of(fn(this.monadValue)).setEither(this.eitherFunction);
     } catch (e) {
-      // const monadNothing = Monad.of(this.eitherFunction(e, this.monadValue));
-      // monadNothing.type = 'Nothing';
       return Monad.of(this.eitherFunction(e, this.monadValue)).setType('Nothing').setEither(this.eitherFunction);
     }
   }
@@ -41,6 +39,14 @@ export default class Monad<T> {
 
   public setEither(fn: ((error: any, monadValue: any) => any)) {
     this.eitherFunction = fn;
+    return this;
+  }
+
+  public setDefaultEither() {
+    this.eitherFunction = (error: Error, monadValue: any) => {
+      console.error(error);
+      return [];
+    }
     return this;
   }
 

@@ -144,9 +144,49 @@ const mappedMonad = myMonad
 console.log(mappedMonad.value); // []
 ```
 
+If you need, you can set either function back to default behavior with `setDefaultEither`
+```typescript
+const customEitherOne = (error, monadValue) => {console.log('customEitherOne'); return ''};
+const customEitherTwo = (error, monadValue) => {console.log('customEitherTwo'); return ''};
+const myMonad: Monad<SonJson> = Monad.of({name: 'Son', parents: {dad: 'Dad', mother:'Mother'}}).setEither(customEither);
+const f = (x: SonJson):ParentsJson => x.parents;
+const g = (x: any):string => x.teste;
+const h = (x: any):number => x.length;
+const mappedMonad = myMonad
+                    .setEither(customEitherOne)
+                    .bind(f)
+                    .setEither(customEitherTwo)
+                    .bind(g)
+                    .setDefaultEither()
+                    .bind(h);
+console.log(mappedMonad.value); // []
+```
+
+### Important!
+It's important to remember that an either function will be passed to all the other binds, so if I set an either function that returns something valid only for my first bind, the Monad will return the either function to the default behavior
+```typescript
+const customEither = (e: any, monadValue: any) => {
+  console.error('customEither');
+  return 3;
+};
+const myMonad: Monad<SonJson> = Monad
+                                .of({name: 'Son', parents: {dad: 'Dad', mother: 'Mother'}})
+                                .setEither(customEither);
+const f = (x: SonJson): ParentsJson => x.parents;
+const g = (x: any): string => x.test;
+const h = (x: any): number => x.length; // it will return 3
+const i = (x: string): string => x.toUpperCase(); // it will try to uppercase 3, this will blow an error, so instead, monad will return the default behavior, in other words, will return []
+const mappedMonad = myMonad
+                    .bind(f)
+                    .bind(g)
+                    .bind(h)
+                    .bind(i);
+console.log(mappedMonad.value); // []
+```
+
 ## Monad Types
 Since Monads can throw error and stop your bind chain (like the cases we saw on either), they have two types to tell if everything ocurred alright or not:
-- Maybe: Monad is a Maybe if your value on `Monad.of(value)` is a valid value or your operations ocurred until the end
-- Nothing: If you pass a falsey value for Monad.of, like null, our an empty array, your Monad will be Nothing. If an error occured during any of your bindings, the result of your Monad will be a Nothing Monad.
+- Just: Monad is a Maybe if your value on `Monad.of(value)` is a valid value or your operations ocurred until the end
+- Nothing: If you pass a falsey value for Monad.of, like null, or an empty array, your Monad will be Nothing. If an error occured during any of your bindings, the result of your Monad will be a Nothing Monad.
 
-To get the type of your Monad, you can use the method `getMonadType(): string`, and it will return the Monad type as a String.
+To get the type of your Monad, you can use the method `getMonadType(): string`, and it will return the Monad type as a string.
