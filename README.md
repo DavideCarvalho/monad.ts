@@ -1,6 +1,6 @@
 <p>
-    <a href="https://www.npmjs.com/package/graphql-simple-request"><img src="https://img.shields.io/npm/v/@dudousxd/monad.ts.svg?maxAge=3600" alt="NPM version" /></a>
-    <a href="https://www.npmjs.com/package/graphql-simple-request"><img src="https://img.shields.io/npm/dt/@dudousxd/monad.ts.svg?maxAge=3600" alt="NPM downloads" /></a>
+    <a href="https://www.npmjs.com/package/@dudousxd/monad.ts"><img src="https://img.shields.io/npm/v/@dudousxd/monad.ts.svg?maxAge=3600" alt="NPM version" /></a>
+    <a href="https://www.npmjs.com/package/@dudousxd/monad.ts"><img src="https://img.shields.io/npm/dt/@dudousxd/monad.ts.svg?maxAge=3600" alt="NPM downloads" /></a>
 </p>
 
 # monad.ts
