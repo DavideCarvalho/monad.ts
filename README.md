@@ -4,6 +4,10 @@
 Monad.ts is a lib capable of giving to TypeScript the ability of having safe IO.
 If you don't know what a monad is, I recommend you to [read about it.](https://medium.com/javascript-scene/javascript-monads-made-simple-7856be57bfe8)
 
+install it with npm or yarn  
+`yarn add @dudousxd/monad.ts`  
+`npm i @dudousxd/monad.ts`
+
 Use this lib is quite simple! You only need to import Monad and encapsulate your object inside it.
 
 ```typescript
