@@ -163,7 +163,7 @@ console.log(mappedMonad.value); // []
 ```
 
 ### Important!
-It's important to remember that an either function will be passed to all the other binds, so if I set an either function that returns something valid only for my first bind, the Monad will return the either function to the default behavior
+It's important to remember that an either function will be passed to all the other binds, so if you set an either function that returns something valid only for my first bind, the Monad will return the either function to the default behavior
 ```typescript
 const customEither = (e: any, monadValue: any) => {
   console.error('customEither');
@@ -185,7 +185,7 @@ console.log(mappedMonad.value); // []
 ```
 
 ## Monad Types
-Since Monads can throw error and stop your bind chain (like the cases we saw on either), they have two types to tell if everything ocurred alright or not:
+Since Monads can throw error and stop your bind chain (like the cases we saw on either), they have two types to tell if everything ocurred okay or not:
 - Just: Monad is a Maybe if your value on `Monad.of(value)` is a valid value or your operations ocurred until the end
 - Nothing: If you pass a falsey value for Monad.of, like null, or an empty array, your Monad will be Nothing. If an error occured during any of your bindings, the result of your Monad will be a Nothing Monad.
 
