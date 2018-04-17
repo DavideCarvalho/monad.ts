@@ -24,7 +24,7 @@ export default class Monad<T> {
       return Monad.of([]).setEither(this.eitherFunction);
     }
     try {
-      if (Array.isArray(this.monadValue)) {
+      if (Array.isArray(this.monadValue)) { 
         return Monad.of(this.monadValue.map(fn)).setEither(this.eitherFunction);
       }
       return Monad.of(fn(this.monadValue)).setEither(this.eitherFunction);

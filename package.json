@@ -1,13 +1,13 @@
 {
-  "name": "@dudousxd/monad_ts",
+  "name": "monad.ts",
   "version": "1.0.0",
   "main": "src/index.js",
   "license": "MIT",
-  "repository" : { 
-    "type" : "git",
-    "url" : "https://github.com/DavideCarvalho/monad.ts.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DavideCarvalho/monad.ts.git"
   },
-  "bugs" : {
+  "bugs": {
     "url": "https://github.com/DavideCarvalho/monad.ts/issues"
   },
   "author": {
@@ -17,8 +17,8 @@
   },
   "scripts": {
     "test": "node_modules/.bin/nyc node_modules/.bin/mocha",
-    "test:coverage":
-      "node_modules/.bin/nyc node_modules/.bin/mocha && node_modules/.bin/nyc report --reporter=text"
+    "test:coverage": "node_modules/.bin/nyc node_modules/.bin/mocha && node_modules/.bin/nyc report --reporter=text",
+    "build": "node_modules/.bin/tsc"
   },
   "devDependencies": {
     "@types/chai": "^4.1.2",
@@ -30,12 +30,23 @@
     "source-map-support": "^0.5.4",
     "ts-jest": "^22.4.2",
     "ts-node": "^5.0.1",
+    "typescript": "^2.8.1",
     "typings": "^2.1.1"
   },
   "nyc": {
-    "extension": [".ts", ".tsx"],
-    "exclude": ["**/*.d.ts", "coverage/**", "**/*.test.ts", "**/dist/*.js"],
-    "reporter": ["html"],
+    "extension": [
+      ".ts",
+      ".tsx"
+    ],
+    "exclude": [
+      "**/*.d.ts",
+      "coverage/**",
+      "**/*.test.ts",
+      "**/dist/*.js"
+    ],
+    "reporter": [
+      "html"
+    ],
     "all": true
   }
 }
